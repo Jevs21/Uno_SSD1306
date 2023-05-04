@@ -22,6 +22,17 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Joystick.h>
+
+#define X_PIN A0
+#define Y_PIN A1
+#define S_PIN 2
+
+int xVal = 0;
+int yVal = 0;
+bool sVal = false;
+
+Joystick joystick(X_PIN, Y_PIN, S_PIN);
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -86,31 +97,31 @@ void setup() {
   // drawing operations and then update the screen all at once by calling
   // display.display(). These examples demonstrate both approaches...
 
-  testdrawline();      // Draw many lines
+  // testdrawline();      // Draw many lines
 
-  testdrawrect();      // Draw rectangles (outlines)
+  // testdrawrect();      // Draw rectangles (outlines)
 
-  testfillrect();      // Draw rectangles (filled)
+  // testfillrect();      // Draw rectangles (filled)
 
-  testdrawcircle();    // Draw circles (outlines)
+  // testdrawcircle();    // Draw circles (outlines)
 
-  testfillcircle();    // Draw circles (filled)
+  // testfillcircle();    // Draw circles (filled)
 
-  testdrawroundrect(); // Draw rounded rectangles (outlines)
+  // testdrawroundrect(); // Draw rounded rectangles (outlines)
 
-  testfillroundrect(); // Draw rounded rectangles (filled)
+  // testfillroundrect(); // Draw rounded rectangles (filled)
 
-  testdrawtriangle();  // Draw triangles (outlines)
+  // testdrawtriangle();  // Draw triangles (outlines)
 
-  testfilltriangle();  // Draw triangles (filled)
+  // testfilltriangle();  // Draw triangles (filled)
 
-  testdrawchar();      // Draw characters of the default font
+  // testdrawchar();      // Draw characters of the default font
 
   testdrawstyles();    // Draw 'stylized' characters
 
   testscrolltext();    // Draw scrolling text
 
-  testdrawbitmap();    // Draw a small bitmap image
+  // testdrawbitmap();    // Draw a small bitmap image
 
   // Invert and restore display, pausing in-between
   display.invertDisplay(true);
@@ -118,11 +129,35 @@ void setup() {
   display.invertDisplay(false);
   delay(1000);
 
-  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
+  // testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
 }
 
+// void loop() {
+//   joystick.print("X: ", "\tY: ", "\tZ: ", 0, 100);
+  
+//   Serial.println();
+//   display.println()
+// }
 void loop() {
+  xVal = analogRead(X_PIN);
+  yVal = analogRead(Y_PIN);
+  sVal = digitalRead(S_PIN);
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.print("X: ");
+  display.print(xVal);
+  display.print("\tY: ");
+  display.print(yVal);
+  display.print("\tS: ");
+  display.print(sVal);
+  
+  display.display();
+  delay(100);
 }
+
 
 void testdrawline() {
   int16_t i;
