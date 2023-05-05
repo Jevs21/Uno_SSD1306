@@ -106,6 +106,12 @@ int paddleY = SCREEN_HEIGHT - 4;
 int paddleWidth = 20;
 int paddleHeight = 4;
 
+int ballX = 0;
+int ballY = 0;
+int ballRad = 3;
+int ballXSpeed = 2;
+int ballYSpeed = 2;
+
 void loop() {
   // Get inputs
   xVal = analogRead(X_PIN);
@@ -149,10 +155,32 @@ void loop() {
   display.print("\tS: ");
   display.print(sVal);
 
+  // Draw ball
+  display.fillCircle(ballX, ballY, ballRad, SSD1306_WHITE);
   // Draw paddle
   display.fillRect(paddleX, paddleY, paddleWidth, paddleHeight, SSD1306_WHITE);
   
   display.display();
+
+  // Move ball
+  ballX += ballXSpeed;
+  ballY += ballYSpeed;
+  // Check for ball collisions
+  if (
+    ballX >= paddleX 
+    && ballX <= paddleX + paddleWidth
+    && ballY >= paddleY
+    && ballY <= paddleY + paddleHeight) {
+      ballYSpeed = ballYSpeed * -1;
+      
+  } else {
+    if (ballX <= 0 || ballX >= SCREEN_WIDTH - ballRad) {
+      ballXSpeed = ballXSpeed * -1;
+    }
+    if (ballY <= 0 || ballY >= SCREEN_HEIGHT - ballRad) {
+      ballYSpeed = ballYSpeed * -1;
+    }
+  }
 
   // Move paddle
   if (xDir == -1) {
