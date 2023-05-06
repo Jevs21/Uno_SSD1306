@@ -68,6 +68,35 @@ static const unsigned char PROGMEM logo_bmp[] =
   0b01110000, 0b01110000,
   0b00000000, 0b00110000 };
 
+
+int paddleX = 0;
+int paddleY = SCREEN_HEIGHT - 4;
+int paddleWidth = 20;
+int paddleHeight = 4;
+
+int ballX = 0;
+int ballY = 0;
+int ballRad = 2;
+int ballXSpeed = 2;
+int ballYSpeed = 2;
+
+typedef struct {
+  int x;
+  int y;
+  int isHit;
+} Brick;
+
+int num_bricks = 20;
+int brickWidth = 6;
+int brickHeight = 4;
+
+Brick bricks[20] = {
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+  {0, 0, 0},
+};
+
 void setup() {
   Serial.begin(9600);
 
@@ -76,6 +105,18 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
+
+  int cur_x, cur_y = 20;
+  // Initialize bricks
+  for(int i=0; i<num_bricks; i++) {
+    bricks[i] = { cur_x, cur_y, 0 };
+    cur_x += brickWidth;
+    if (cur_x + 6 >= SCREEN_WIDTH - 20) {
+      cur_x = 20;
+      cur_y += brickHeight + 2;
+    }
+  }
+  
 
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
@@ -101,16 +142,9 @@ void setup() {
 
 }
 
-int paddleX = 0;
-int paddleY = SCREEN_HEIGHT - 4;
-int paddleWidth = 20;
-int paddleHeight = 4;
+// int* brickX = {}
 
-int ballX = 0;
-int ballY = 0;
-int ballRad = 3;
-int ballXSpeed = 2;
-int ballYSpeed = 2;
+
 
 void loop() {
   // Get inputs
@@ -155,6 +189,12 @@ void loop() {
   display.print("\tS: ");
   display.print(sVal);
 
+  // Draw bricks
+  for (int i=0; i < num_bricks; i++) {
+    if (!bricks[i].isHit) {
+      display.fillRect(bricks[i].x, bricks[i].y, brickWidth, brickHeight, SSD1306_WHITE);
+    }
+  }
   // Draw ball
   display.fillCircle(ballX, ballY, ballRad, SSD1306_WHITE);
   // Draw paddle
@@ -166,7 +206,8 @@ void loop() {
   ballX += ballXSpeed;
   ballY += ballYSpeed;
   // Check for ball collisions
-  if (
+  if ( 
+    // Collision with paddle
     ballX >= paddleX 
     && ballX <= paddleX + paddleWidth
     && ballY >= paddleY
@@ -179,6 +220,21 @@ void loop() {
     }
     if (ballY <= 0 || ballY >= SCREEN_HEIGHT - ballRad) {
       ballYSpeed = ballYSpeed * -1;
+    }
+
+    // Check brick collisions
+    for(int i=0; i < num_bricks; i++) {
+      if (!bricks[i].isHit) {
+        if (
+          ballX >= bricks[i].x &&
+          ballX <= bricks[i].x + brickWidth && 
+          ballY <= bricks[i].y &&
+          ballY <= bricks[i].y + brickHeight
+          ) {
+            bricks[i].isHit = 1;
+            ballYSpeed = ballYSpeed * -1;
+          }
+      }
     }
   }
 
