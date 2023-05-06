@@ -23,9 +23,23 @@ void InputController::getJoystickValues(int* arr) {
   int yVal = analogRead(Y_PIN);
   bool sVal = digitalRead(S_PIN);
 
+  if (xVal < 400) {
+    arr[0] = -1;
+  } else if (xVal > 600) {
+    arr[0] = 1;
+  } else {
+    arr[0] = 0;
+  }
+  if (yVal < 400) {
+    arr[1] = -1;
+  } else if(yVal > 600) {
+    arr[1] = 1;
+  } else {
+    arr[1] = 0;
+  }
   // int values[3] = {xVal, yVal, sVal};
   // return values;
-  arr[0] = xVal;
-  arr[1] = yVal;
-  arr[2] = sVal;
+  // arr[0] = xVal;
+  // arr[1] = yVal;
+  arr[2] = (sVal) ? 0 : 1;
 }

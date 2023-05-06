@@ -76,14 +76,57 @@ void setup() {
 
 }
 
+int menuIndY = 0;
+int menuIndX = 0;
+#define LOGO_HEIGHT   16
+#define LOGO_WIDTH    16
+static const unsigned char PROGMEM logo_bmp[] =
+{ 0b00000000, 0b11000000,
+  0b00000001, 0b11000000,
+  0b00000001, 0b11000000,
+  0b00000011, 0b11100000,
+  0b11110011, 0b11100000,
+  0b11111110, 0b11111000,
+  0b01111110, 0b11111111,
+  0b00110011, 0b10011111,
+  0b00011111, 0b11111100,
+  0b00001101, 0b01110000,
+  0b00011011, 0b10100000,
+  0b00111111, 0b11100000,
+  0b00111111, 0b11110000,
+  0b01111100, 0b11110000,
+  0b01110000, 0b01110000,
+  0b00000000, 0b00110000 };
+
+void testdrawbitmap(void) {
+  display.clearDisplay();
+
+  display.drawBitmap(
+    (display.width()  - LOGO_WIDTH ) / 2,
+    (display.height() - LOGO_HEIGHT) / 2,
+    logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
+  display.display();
+  delay(1000);
+}
 
 void loop() {
   inputController.getJoystickValues(inputs);
 
   if (inputs[2]) {
-    testPrintInputs(display, inputs[0], inputs[1], inputs[2]);
+    // testdrawcircle(display);
+    testdrawbitmap();
   } else {
-    testdrawcircle(display);
+    if (inputs[0] > 0) {
+      Serial.println("Going right.");
+    } else if (inputs[0] < 0) {
+      Serial.println("Going left.");
+    }
+    if (inputs[1] > 0) {
+      Serial.println("Going down.");
+    } else if (inputs[1] < 0) {
+      Serial.println("Going up.");
+    }
+    testPrintInputs(display, inputs[0], inputs[1], inputs[2]);
   }
 }
 
