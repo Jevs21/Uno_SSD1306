@@ -115,6 +115,7 @@ void loop() {
   if (inputs[2]) {
     // testdrawcircle(display);
     testdrawbitmap();
+    
   } else {
     if (inputs[0] > 0) {
       Serial.println("Going right.");
